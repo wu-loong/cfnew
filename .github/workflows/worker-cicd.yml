@@ -41,10 +41,6 @@ jobs:
           const outputFile = "_worker.js";
           const profileFile = "obfuscation-profile.json";
 
-          function pick(arr) {
-            return arr[Math.floor(Math.random() * arr.length)];
-          }
-
           if (!fs.existsSync(sourceFile)) {
             throw new Error(`Missing source file: ${sourceFile}`);
           }
@@ -56,29 +52,37 @@ jobs:
 
           const options = {
             compact: true,
-            // Keep core flow transforms stable to avoid invalid output on large scripts.
             controlFlowFlattening: false,
             controlFlowFlatteningThreshold: 0,
             deadCodeInjection: false,
             deadCodeInjectionThreshold: 0,
             stringArray: true,
-            stringArrayEncoding: pick([[], ["base64"], ["rc4"]]),
-            stringArrayThreshold: pick([0.75, 1]),
+            stringArrayEncoding: ["base64"],
+            stringArrayThreshold: 1,
             stringArrayRotate: true,
             stringArrayShuffle: true,
-            stringArrayWrappersCount: pick([1, 2, 3]),
-            renameGlobals: false,
-            identifierNamesGenerator: pick(["hexadecimal", "mangled", "mangled-shuffled"]),
+            stringArrayWrappersCount: 2,
+            stringArrayWrappersChainedCalls: false,
+            stringArrayWrappersParametersMaxCount: 3,
+            renameGlobals: true,
+            identifierNamesGenerator: "mangled-shuffled",
+            identifierNamesCache: null,
+            identifiersPrefix: "",
+            renameProperties: false,
+            renamePropertiesMode: "safe",
             numbersToExpressions: false,
             simplify: false,
-            splitStrings: pick([false, true]),
-            splitStringsChunkLength: pick([3, 5, 8]),
+            splitStrings: true,
+            splitStringsChunkLength: 1,
             transformObjectKeys: false,
-            unicodeEscapeSequence: pick([false, true]),
+            unicodeEscapeSequence: true,
             selfDefending: false,
             debugProtection: false,
-            disableConsoleOutput: pick([false, true]),
+            debugProtectionInterval: 0,
+            disableConsoleOutput: true,
             ignoreImports: false,
+            // Random seed => different obfuscation result each deployment run.
+            seed: Math.floor(Math.random() * 1_000_000_000),
             target: "browser",
           };
 
