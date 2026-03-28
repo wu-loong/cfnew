@@ -93,10 +93,18 @@
 
 #### GitHub Actions 自动部署（Worker CI/CD）
 
-默认已提供 `.github/workflows/worker-cicd.yml`，当 `main` 分支有新提交时会自动执行：
+默认已提供 `.github/workflows/worker-cicd.yml`，触发方式：
 
-1. `validate`：复制 `明文源吗` 为 `_worker.js`，执行 `wrangler --version` 和 `wrangler deploy --dry-run`
-2. `deploy`：校验通过后自动发布到 Cloudflare Worker
+- `main` 分支 push 自动部署
+- 每天自动重部署一次（UTC `02:15`，即北京时间 `10:15`）
+- 支持手动触发（workflow_dispatch）
+
+每次触发都会先对 `明文源吗` 进行**随机参数混淆**，再使用混淆后的 `_worker.js` 发布，避免固定混淆模式。
+
+执行流程：
+
+1. `validate`：随机混淆生成 `_worker.js`，执行 `wrangler --version` 和 `wrangler deploy --dry-run`
+2. `deploy`：下载同一轮构建产物并发布到 Cloudflare Worker
 
 请在 GitHub 仓库 `Settings -> Secrets and variables -> Actions` 配置以下 Secrets：
 
