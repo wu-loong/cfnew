@@ -2,11 +2,6 @@ name: Generate and Obfuscate Worker Script
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - '**'  # 仅匹配分支推送，排除标签推送
-    paths:
-      - '明文源吗'
 
 jobs:
   build-and-obfuscate:

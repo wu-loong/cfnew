@@ -1,9 +1,7 @@
 name: Deploy Worker Script
 
 on:
-  push:
-    tags:
-      - '*'  # 当任何标签被推送时触发
+  workflow_dispatch:
 
 jobs:
   deploy-worker:
