@@ -91,6 +91,32 @@
 
 订阅每15分钟自动优选一次
 
+#### GitHub Actions 自动部署（Worker CI/CD）
+
+默认已提供 `.github/workflows/worker-cicd.yml`，当 `main` 分支有新提交时会自动执行：
+
+1. `validate`：复制 `明文源吗` 为 `_worker.js`，执行 `wrangler --version` 和 `wrangler deploy --dry-run`
+2. `deploy`：校验通过后自动发布到 Cloudflare Worker
+
+请在 GitHub 仓库 `Settings -> Secrets and variables -> Actions` 配置以下 Secrets：
+
+| Secret 名称 | 说明 |
+| :--- | :--- |
+| `CF_API_TOKEN` | Cloudflare API Token（建议最小权限） |
+| `CF_ACCOUNT_ID` | Cloudflare 账号 ID |
+| `CF_WORKER_NAME` | Worker 名称（如 `cfnew-prod`） |
+| `CF_KV_NAMESPACE_ID` | KV 命名空间 ID（绑定变量名 `C`） |
+| `CF_ENV_U` | 必填环境变量 `u`（UUID） |
+
+建议在 GitHub 分支保护中对 `main` 启用 status check，要求 `Validate Worker Build` 通过后再允许合并。
+
+保留本地应急部署命令：
+
+```bash
+cp 明文源吗 _worker.js
+wrangler deploy _worker.js
+```
+
 #### 基础配置
 | 变量名 | 值 | 说明 |
 | :--- | :--- | :--- |
